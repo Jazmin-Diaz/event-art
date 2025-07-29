@@ -13,14 +13,43 @@
       color: #333;
     }
     header {
-      background-image: 
-        url('https://auditoriobb.com/wp-content/uploads/2025/02/cover-evento-empresarial-abb.jpg');
+      background-image: url('https://auditoriobb.com/wp-content/uploads/2025/02/cover-evento-empresarial-abb.jpg');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
       color: white;
       padding: 50px 20px;
-      text-align: center;
+      position: relative;
+      height: 350px;
+    }
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+    .header-content h1 {
+      margin: 0;
+      font-size: 3em;
+      color: white;
+      margin-left: 100px; /* Ajusta este valor según necesites */
+    }
+    .logo {
+      max-width: 100px;
+      height: auto;
+    }
+    .frase {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: black;
+      font-weight: bold;
+      font-size: 1.2em;
+      background-color: rgba(255, 255, 255, 0.7);
+      padding: 10px 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     }
     nav {
       background-color: #9e5483;
@@ -35,10 +64,6 @@
     }
     section {
       padding: 40px 20px;
-    }
-    .logo {
-      max-width: 100px;
-      margin: 20px auto;
     }
     footer {
       background-color: #eee;
@@ -63,9 +88,11 @@
 </head>
 <body>
   <header>
-    <h1>Event_Art</h1>
-    <p>Organiza sin drama, celebra a lo grande ✨</p>
-    <img src="Logo.jpg" alt="Logo de Event_Art" class="logo">
+    <div class="header-content">
+      <h1>Event_Art</h1>
+      <img src="Logo.jpg" alt="Logo de Event_Art" class="logo">
+    </div>
+    <div class="frase">Organiza sin drama, celebra a lo grande ✨</div>
   </header>
 
   <nav>
@@ -74,7 +101,7 @@
     <a href="#funciones">Funciones</a>
     <a href="#resumenes">Resumenes</a>
     <a href="#contacto">Contacto</a>
-      <a href="login.html">Iniciar Sesión</a>
+    <a href="login.html">Iniciar Sesión</a>
   </nav>
 
   <section id="inicio">
