@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Registro - Event_Art</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .registro-container {
+      background-color: #fff;
+      padding: 40px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 320px;
+    }
+    h1 {
+      color: #9e5483;
+      margin-bottom: 30px;
+    }
+    button {
+      display: block;
+      width: 100%;
+      margin-bottom: 20px;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background-color: #9e5483;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #7a3e67;
+    }
+  </style>
+</head>
+<body>
+  <div class="registro-container">
+    <h1>Registrarse como:</h1>
+
+    <button onclick="window.location.href='registro_proveedor.html'">Proveedor</button>
+    <button onclick="window.location.href='registro_organizador.html'">Organizador</button>
+    <button onclick="window.location.href='registro_cliente.html'">Cliente</button>
+  </div>
+</body>
+</html>

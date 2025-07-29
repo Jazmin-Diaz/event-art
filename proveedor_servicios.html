@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mis Servicios - Proveedor</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f2f2f2;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #9e5483;
+      margin-bottom: 25px;
+    }
+    #btnVolver {
+      display: inline-block;
+      margin-bottom: 20px;
+      background-color: #9e5483;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    #btnVolver:hover {
+      background-color: #7d3e6a;
+    }
+    .servicio {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+      padding: 20px;
+      margin-bottom: 20px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .servicio img {
+      width: 180px;
+      height: 120px;
+      object-fit: contain; /* Cambiado a contain para que se vea completa */
+      border-radius: 12px;
+      flex-shrink: 0;
+      background: #f0f0f0;
+    }
+    .info-servicio {
+      flex-grow: 1;
+    }
+    .info-contacto {
+      margin-top: 15px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+    .info-contacto span {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .btn-eliminar {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      align-self: start;
+      transition: background-color 0.3s ease;
+    }
+    .btn-eliminar:hover {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+
+  <a id="btnVolver" href="proveedor_inicio.html">← Volver al Inicio</a>
+
+  <h1>Mis Servicios</h1>
+
+  <div id="listaServicios"></div>
+
+  <script>
+    const usuarioActual = JSON.parse(localStorage.getItem("usuario_actual"));
+
+    if (!usuarioActual || usuarioActual.rol !== "proveedor") {
+      alert("Debes iniciar sesión como proveedor para acceder a esta página.");
+      window.location.href = "login.html";
+    }
+
+    const listaServicios = document.getElementById("listaServicios");
+
+    function cargarServicios() {
+      const servicios = JSON.parse(localStorage.getItem("servicios")) || [];
+      const serviciosPropios = servicios.filter(s => s.correoProveedor === usuarioActual.correo);
+
+      listaServicios.innerHTML = "";
+
+      if (serviciosPropios.length === 0) {
+        listaServicios.innerHTML = "<p style='text-align:center;'>No tienes servicios creados aún.</p>";
+        return;
+      }
+
+      serviciosPropios.forEach(s => {
+        const div = document.createElement("div");
+        div.classList.add("servicio");
+
+        div.innerHTML = `
+          ${s.imagen ? `<img src="${s.imagen}" alt="Imagen de ${s.nombreServicio}">` : `<div style="width:180px;height:120px;background:#ccc;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#777;font-style:italic;">Sin imagen</div>`}
+          <div class="info-servicio">
+            <h2 style="margin-top:0;">${s.nombreServicio}</h2>
+            <strong>Categoría:</strong> ${s.categoria}<br/>
+            <p>${s.descripcionServicio}</p>
+            <div class="info-contacto">
+              <span>📩 Correo: ${s.correoProveedor}</span>
+              <span>📞 Teléfono: ${s.telefonoProveedor}</span>
+            </div>
+          </div>
+          <button class="btn-eliminar" data-id="${s.id}">Eliminar</button>
+        `;
+
+        listaServicios.appendChild(div);
+      });
+
+      // Agregar eventos a botones eliminar
+      const btnsEliminar = document.querySelectorAll(".btn-eliminar");
+      btnsEliminar.forEach(btn => {
+        btn.addEventListener("click", function () {
+          const idEliminar = this.getAttribute("data-id");
+          if (confirm("¿Seguro que quieres eliminar este servicio?")) {
+            eliminarServicio(idEliminar);
+          }
+        });
+      });
+    }
+
+    function eliminarServicio(id) {
+      let servicios = JSON.parse(localStorage.getItem("servicios")) || [];
+      servicios = servicios.filter(s => s.id !== id);
+      localStorage.setItem("servicios", JSON.stringify(servicios));
+      cargarServicios();
+    }
+
+    // Carga inicial
+    cargarServicios();
+
+  </script>
+
+</body>
+</html>

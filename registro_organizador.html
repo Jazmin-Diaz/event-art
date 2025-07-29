@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Registro Organizador - Event_Art</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    #registro-container {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      width: 360px;
+    }
+    h1 {
+      text-align: center;
+      color: #9e5483;
+      margin-bottom: 25px;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+    button {
+      margin-top: 25px;
+      background-color: #9e5483;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #7d3e6a;
+    }
+    #errorMsg {
+      color: #e74c3c;
+      margin-top: 15px;
+      font-weight: bold;
+      min-height: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="registro-container">
+    <h1>Registro Organizador</h1>
+    <form id="formRegistroOrganizador">
+      <label for="nombre">Nombre completo:</label>
+      <input type="text" id="nombre" required />
+
+      <label for="correo">Correo electrónico:</label>
+      <input type="email" id="correo" required />
+
+      <label for="telefono">Teléfono:</label>
+      <input type="tel" id="telefono" required pattern="[0-9+\-\s]{7,15}" placeholder="Ejemplo: +52 123 456 7890" />
+
+      <label for="ciudad">Ciudad:</label>
+      <input type="text" id="ciudad" required />
+
+      <label for="descripcion">Descripción / Presentación (opcional):</label>
+      <textarea id="descripcion" placeholder="Escribe algo sobre ti o tu empresa"></textarea>
+
+      <label for="foto">Foto o logo (opcional):</label>
+      <input type="file" id="foto" accept="image/*" />
+
+      <label for="instagram">Instagram (opcional):</label>
+      <input type="text" id="instagram" placeholder="@usuario" />
+
+      <label for="facebook">Facebook (opcional):</label>
+      <input type="text" id="facebook" placeholder="URL de Facebook" />
+
+      <label for="contrasena">Contraseña:</label>
+      <input type="password" id="contrasena" required minlength="6" />
+
+      <button type="submit">Registrarse</button>
+
+      <div id="errorMsg"></div>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('formRegistroOrganizador');
+    const errorMsg = document.getElementById('errorMsg');
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      errorMsg.textContent = '';
+
+      const nombre = document.getElementById('nombre').value.trim();
+      const correo = document.getElementById('correo').value.trim().toLowerCase();
+      const telefono = document.getElementById('telefono').value.trim();
+      const ciudad = document.getElementById('ciudad').value.trim();
+      const descripcion = document.getElementById('descripcion').value.trim();
+      const instagram = document.getElementById('instagram').value.trim();
+      const facebook = document.getElementById('facebook').value.trim();
+      const contrasena = document.getElementById('contrasena').value;
+
+      if (!nombre || !correo || !telefono || !ciudad || !contrasena) {
+        errorMsg.textContent = 'Por favor, completa todos los campos obligatorios.';
+        return;
+      }
+
+      if (!correo.match(/^\S+@\S+\.\S+$/)) {
+        errorMsg.textContent = 'Introduce un correo electrónico válido.';
+        return;
+      }
+
+      if (!telefono.match(/^[0-9+\-\s]{7,15}$/)) {
+        errorMsg.textContent = 'Introduce un teléfono válido.';
+        return;
+      }
+
+      const inputFoto = document.getElementById('foto');
+      if (inputFoto.files.length > 0) {
+        const file = inputFoto.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          guardarOrganizador(e.target.result);
+        }
+        reader.readAsDataURL(file);
+      } else {
+        guardarOrganizador('');
+      }
+
+      function guardarOrganizador(fotoBase64) {
+        let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+
+        const existe = usuarios.some(u => u.correo.toLowerCase() === correo && u.rol === 'organizador');
+        if (existe) {
+          errorMsg.textContent = 'Ya existe un organizador registrado con este correo.';
+          return;
+        }
+
+        const nuevoOrganizador = {
+          id: Date.now().toString(),
+          nombre,
+          correo,
+          telefono,
+          ciudad,
+          rol: 'organizador',  // <-- corregido: usa "rol"
+          descripcion,
+          foto: fotoBase64,
+          instagram,
+          facebook,
+          contrasena
+        };
+
+        usuarios.push(nuevoOrganizador);
+        localStorage.setItem('usuarios', JSON.stringify(usuarios));
+
+        alert('Registro exitoso. Ahora puedes iniciar sesión.');
+        window.location.href = 'login.html';
+      }
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Organizador - Crear Paquete</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4fdf8;
+      margin: 0;
+      padding: 0;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #2e8b57;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+    .filtro {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    select {
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .catalogo {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .tarjeta {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+    }
+    .tarjeta img {
+      max-width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+    .info {
+      margin-top: 10px;
+    }
+    .info h4 {
+      margin: 0;
+      font-size: 1.1em;
+      color: #2e8b57;
+    }
+    .info p {
+      margin: 4px 0;
+      font-size: 0.9em;
+    }
+    .info input[type="number"] {
+      width: 60px;
+      padding: 5px;
+      margin-top: 5px;
+    }
+    button {
+      background-color: #2e8b57;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 30px;
+    }
+    button:hover {
+      background-color: #256b45;
+    }
+    .btn-regresar {
+      display: inline-block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background-color: #ccc;
+      color: #333;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      text-align: center;
+    }
+    .btn-regresar:hover {
+      background-color: #aaa;
+    }
+  </style>
+</head>
+<body>
+
+  <div style="text-align: center;">
+    <a href="organizador_inicio.html" class="btn-regresar">⬅ Volver al menú principal</a>
+  </div>
+
+  <div class="container">
+    <h1>🎉 Crear Paquete de Evento</h1>
+
+    <div class="filtro">
+      <label for="categoriaFiltro">Filtrar por categoría:</label>
+      <select id="categoriaFiltro">
+        <option value="todos">Todos</option>
+        <option value="sillas">Sillas</option>
+        <option value="mesas">Mesas</option>
+        <option value="carpas">Carpas</option>
+        <option value="platillo">Platillo</option>
+        <option value="bebida">Bebida</option>
+        <option value="postre">Postre</option>
+        <option value="plato">Plato</option>
+        <option value="copa">Copa</option>
+        <option value="cubierto">Cubierto</option>
+        <option value="decoración">Decoración</option>
+        <option value="entretenimiento">Entretenimiento</option>
+        <option value="extra">Extra</option>
+      </select>
+    </div>
+
+    <form id="paqueteForm" onsubmit="guardarPaquete(event)">
+      <div class="catalogo" id="catalogoServicios"></div>
+
+      <h2>📍 Lugar y Comentarios</h2>
+      <input type="text" id="lugar" placeholder="Lugar del evento" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
+      <textarea id="comentarios" placeholder="Notas adicionales..." rows="4" style="width: 100%; margin-top: 10px; padding: 10px; border-radius: 5px; border: 1px solid #ccc;"></textarea>
+
+      <div style="text-align:center;">
+        <button type="submit">Guardar Paquete</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    let serviciosGlobal = [];
+
+    function cargarServicios() {
+      const servicios = JSON.parse(localStorage.getItem("serviciosProveedor")) || [];
+      serviciosGlobal = servicios;
+      mostrarServicios("todos");
+    }
+
+    function mostrarServicios(filtro) {
+      const contenedor = document.getElementById("catalogoServicios");
+      contenedor.innerHTML = "";
+
+      const filtrados = filtro === "todos"
+        ? serviciosGlobal
+        : serviciosGlobal.filter(s => s.tipoServicio.toLowerCase() === filtro.toLowerCase());
+
+      filtrados.forEach((servicio, i) => {
+        const card = document.createElement("div");
+        card.className = "tarjeta";
+        card.innerHTML = `
+          <img src="${servicio.imagen || 'https://via.placeholder.com/200'}" alt="${servicio.nombre}">
+          <div class="info">
+            <h4>${servicio.nombre}</h4>
+            <p><strong>Proveedor:</strong> ${servicio.proveedor}</p>
+            <p>${servicio.descripcion || ''}</p>
+            <p><strong>Categoría:</strong> ${servicio.tipoServicio}</p>
+            <p><strong>Precio:</strong> $${servicio.precio}</p>
+            <label>
+              Cantidad:
+              <input type="number" min="0" name="cantidad_${i}" data-nombre="${servicio.nombre}" data-categoria="${servicio.tipoServicio}" data-imagen="${servicio.imagen}" />
+            </label>
+          </div>
+        `;
+        contenedor.appendChild(card);
+      });
+    }
+
+    document.getElementById("categoriaFiltro").addEventListener("change", function() {
+      mostrarServicios(this.value);
+    });
+
+    function guardarPaquete(event) {
+      event.preventDefault();
+      const lugar = document.getElementById("lugar").value.trim();
+      const comentarios = document.getElementById("comentarios").value.trim();
+      const creadoPor = JSON.parse(localStorage.getItem("usuario_actual"))?.nombre || "Anónimo";
+
+      const cantidades = Array.from(document.querySelectorAll('input[type="number"]'))
+        .filter(input => parseInt(input.value) > 0)
+        .map(input => ({
+          nombre: input.dataset.nombre,
+          categoria: input.dataset.categoria,
+          cantidad: parseInt(input.value),
+          imagen: input.dataset.imagen
+        }));
+
+      const paquete = {
+        creadoPor,
+        lugar,
+        comentarios,
+        fecha: new Date().toLocaleDateString(),
+        servicios: cantidades
+      };
+
+      const paquetes = JSON.parse(localStorage.getItem("paquetesOrganizador")) || [];
+      paquetes.push(paquete);
+      localStorage.setItem("paquetesOrganizador", JSON.stringify(paquetes));
+
+      alert("✅ Paquete guardado correctamente.");
+      document.getElementById("paqueteForm").reset();
+      mostrarServicios("todos");
+    }
+
+    window.onload = cargarServicios;
+  </script>
+
+</body>
+</html>

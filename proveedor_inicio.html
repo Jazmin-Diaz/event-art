@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bienvenido Proveedor - Event_Art</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background-color: #f9f9f9;
+    }
+    header {
+      background-color: #9e5483;
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+    }
+    h1 {
+      margin: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+    .menu {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 25px;
+      margin-top: 30px;
+    }
+    .menu a {
+      background-color: #9e5483;
+      color: white;
+      padding: 35px 10px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 12px;
+      text-decoration: none;
+      box-shadow: 0 3px 7px rgba(0,0,0,0.1);
+      transition: background-color 0.3s;
+      display: block;
+    }
+    .menu a:hover {
+      background-color: #7d3e6a;
+    }
+    .btn-regresar {
+      display: inline-block;
+      margin: 30px auto;
+      padding: 10px 22px;
+      background-color: #ccc;
+      color: #333;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+    .btn-regresar:hover {
+      background-color: #aaa;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>👋 Bienvenido, Proveedor</h1>
+  <p>Gestiona tus servicios y productos</p>
+</header>
+
+<div class="container">
+  <p>Selecciona una opción del menú:</p>
+  <div class="menu">
+    <a href="proveedor_servicios.html">📋 Mis Servicios</a>
+    <a href="proveedor_crear_servicio.html">➕ Crear Servicio</a>
+    <a href="index.html">🏠 Volver al Inicio</a>
+    <a href="login.html" onclick="cerrarSesion()">🚪 Cerrar Sesión</a>
+  </div>
+</div>
+
+<script>
+  const rol = localStorage.getItem("rolUsuario");
+  if (rol !== "proveedor") {
+    alert("Acceso restringido. Debes iniciar sesión como proveedor.");
+    window.location.href = "login.html";
+  }
+
+  function cerrarSesion() {
+    localStorage.removeItem("rolUsuario");
+    localStorage.removeItem("nombreUsuario");
+  }
+</script>
+
+</body>
+</html>

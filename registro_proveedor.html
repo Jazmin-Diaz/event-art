@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Proveedor - Event_Art</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f2f2f2;
+      padding: 30px;
+    }
+    h1 {
+      text-align: center;
+      color: #9e5483;
+    }
+    form {
+      background-color: white;
+      max-width: 600px;
+      margin: auto;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    button {
+      background-color: #9e5483;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 20px;
+      width: 100%;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #7d3e6a;
+    }
+    img {
+      max-width: 100%;
+      margin-top: 10px;
+      border-radius: 8px;
+      display: none;
+    }
+    .btn-regresar {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      text-decoration: none;
+      color: #555;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Registro de Proveedor</h1>
+
+  <form id="formRegistroProveedor">
+    <label>📛 Nombre completo:</label>
+    <input type="text" id="nombre" required>
+
+    <label>📩 Correo electrónico:</label>
+    <input type="email" id="correo" required>
+
+    <label>🔑 Contraseña:</label>
+    <input type="password" id="contrasena" required minlength="4">
+
+    <label>📞 Teléfono:</label>
+    <input type="tel" id="telefono" required>
+
+    <label>🏙️ Ciudad:</label>
+    <input type="text" id="ciudad" required>
+
+    <label>📝 Descripción:</label>
+    <textarea id="descripcion" required></textarea>
+
+    <label>📷 Foto o logo (opcional):</label>
+    <input type="file" id="foto" accept="image/*">
+    <img id="previewFoto" alt="Vista previa">
+
+    <label>🔗 Instagram (opcional):</label>
+    <input type="url" id="instagram">
+
+    <label>🔗 Facebook (opcional):</label>
+    <input type="url" id="facebook">
+
+    <button type="submit">Crear Cuenta</button>
+  </form>
+
+  <a href="login.html" class="btn-regresar">¿Ya tienes cuenta? Inicia sesión</a>
+
+  <script>
+    const fotoInput = document.getElementById("foto");
+    const preview = document.getElementById("previewFoto");
+    let fotoBase64 = "";
+
+    fotoInput.addEventListener("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          fotoBase64 = e.target.result;
+          preview.src = fotoBase64;
+          preview.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    document.getElementById("formRegistroProveedor").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const nombre = document.getElementById("nombre").value.trim();
+      const correo = document.getElementById("correo").value.trim();
+      const contrasena = document.getElementById("contrasena").value;
+      const telefono = document.getElementById("telefono").value.trim();
+      const ciudad = document.getElementById("ciudad").value.trim();
+      const descripcion = document.getElementById("descripcion").value.trim();
+      const instagram = document.getElementById("instagram").value.trim();
+      const facebook = document.getElementById("facebook").value.trim();
+
+      const nuevoProveedor = {
+        nombre,
+        correo,
+        contrasena,
+        telefono,
+        ciudad,
+        descripcion,
+        foto: fotoBase64,
+        instagram,
+        facebook,
+        rol: "proveedor"
+      };
+
+      let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+
+      // Validación: evitar duplicados por correo
+      if (usuarios.some(u => u.correo === correo)) {
+        alert("Este correo ya está registrado.");
+        return;
+      }
+
+      usuarios.push(nuevoProveedor);
+      localStorage.setItem("usuarios", JSON.stringify(usuarios));
+
+      alert("Cuenta de proveedor creada exitosamente.");
+      window.location.href = "login.html";
+    });
+  </script>
+
+</body>
+</html>

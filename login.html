@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Iniciar Sesión</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    #login-container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 350px;
+    }
+    h1 {
+      text-align: center;
+      color: #9e5483;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 25px;
+      background-color: #9e5483;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+    }
+    #errorMsg {
+      color: red;
+      margin-top: 10px;
+      text-align: center;
+      min-height: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="login-container">
+    <h1>Iniciar Sesión</h1>
+    <form id="formLogin">
+      <label for="correo">Correo electrónico:</label>
+      <input type="email" id="correo" required />
+
+      <label for="contrasena">Contraseña:</label>
+      <input type="password" id="contrasena" required />
+
+      <label for="rol">Tipo de usuario:</label>
+      <select id="rol" required>
+        <option value="" disabled selected>Selecciona un rol</option>
+        <option value="cliente">Cliente</option>
+        <option value="proveedor">Proveedor</option>
+        <option value="organizador">Organizador</option>
+      </select>
+
+      <button type="submit">Entrar</button>
+    </form>
+
+    <button id="crearCuentaBtn">Crear cuenta</button>
+    <div id="errorMsg"></div>
+  </div>
+
+  <script>
+    document.getElementById('crearCuentaBtn').addEventListener('click', () => {
+      window.location.href = 'registro.html';
+    });
+
+    document.getElementById('formLogin').addEventListener('submit', e => {
+      e.preventDefault();
+      const correo = document.getElementById('correo').value.trim().toLowerCase();
+      const contrasena = document.getElementById('contrasena').value;
+      const rol = document.getElementById('rol').value;
+      const errorMsg = document.getElementById('errorMsg');
+
+      let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+      const usuario = usuarios.find(u => 
+        u.correo === correo && 
+        u.contrasena === contrasena &&
+        u.rol === rol  // <-- corregido: usa "rol"
+      );
+
+      if (!usuario) {
+        errorMsg.textContent = 'Usuario o contraseña incorrectos.';
+        return;
+      }
+
+      localStorage.setItem('usuario_actual', JSON.stringify(usuario));
+      localStorage.setItem('rolUsuario', rol);
+
+      switch(rol) {
+        case 'cliente':
+          window.location.href = 'cliente_inicio.html';
+          break;
+        case 'proveedor':
+          window.location.href = 'proveedor_inicio.html';
+          break;
+        case 'organizador':
+          window.location.href = 'organizador_inicio.html';
+          break;
+        default:
+          errorMsg.textContent = 'Rol inválido.';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Crear Servicio - Proveedor</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #9e5483;
+      margin-bottom: 20px;
+    }
+    #btnVolver {
+      display: inline-block;
+      margin-bottom: 20px;
+      background-color: #9e5483;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    #btnVolver:hover {
+      background-color: #7d3e6a;
+    }
+    form {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    button {
+      margin-top: 25px;
+      background-color: #9e5483;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #7d3e6a;
+    }
+    img {
+      max-width: 100%;
+      margin-top: 10px;
+      border-radius: 8px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <a id="btnVolver" href="proveedor_inicio.html">← Volver al Inicio</a>
+
+  <h1>Crear Servicio</h1>
+
+  <form id="formCrearServicio">
+    <label>Nombre del servicio:</label>
+    <input type="text" id="nombreServicio" required />
+
+    <label>Categoría:</label>
+    <select id="categoria" required>
+      <option value="" disabled selected>Selecciona una categoría</option>
+      <option value="Sillas">Sillas</option>
+      <option value="Mesas">Mesas</option>
+      <option value="Platillos">Platillos</option>
+      <option value="Postres">Postres</option>
+      <option value="Platos y vasos">Platos y vasos</option>
+      <option value="Cristalería">Cristalería</option>
+      <option value="Bebidas">Bebidas</option>
+      <option value="Otros">Otros</option>
+    </select>
+
+    <label>Descripción:</label>
+    <textarea id="descripcionServicio" required></textarea>
+
+    <label>Imagen del servicio (opcional):</label>
+    <input type="file" id="imagenServicio" accept="image/*" />
+    <img id="previewImagen" alt="Vista previa imagen" />
+
+    <button type="submit">Guardar Servicio</button>
+  </form>
+
+  <script>
+    const inputImagen = document.getElementById("imagenServicio");
+    const previewImagen = document.getElementById("previewImagen");
+    let imagenBase64 = "";
+
+    inputImagen.addEventListener("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          imagenBase64 = e.target.result;
+          previewImagen.src = imagenBase64;
+          previewImagen.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    const usuarioActual = JSON.parse(localStorage.getItem("usuario_actual"));
+
+    if (!usuarioActual || usuarioActual.rol !== "proveedor") {
+      alert("Debes iniciar sesión como proveedor para acceder a esta página.");
+      window.location.href = "login.html";
+    }
+
+    document.getElementById("formCrearServicio").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const nombreServicio = document.getElementById("nombreServicio").value.trim();
+      const categoria = document.getElementById("categoria").value;
+      const descripcionServicio = document.getElementById("descripcionServicio").value.trim();
+
+      const servicio = {
+        id: Date.now().toString(),
+        nombreServicio,
+        categoria,
+        descripcionServicio,
+        imagen: imagenBase64,
+        correoProveedor: usuarioActual.correo,
+        telefonoProveedor: usuarioActual.telefono
+      };
+
+      let servicios = JSON.parse(localStorage.getItem("servicios")) || [];
+      servicios.push(servicio);
+      localStorage.setItem("servicios", JSON.stringify(servicios));
+
+      alert("Servicio guardado correctamente.");
+      this.reset();
+      previewImagen.style.display = "none";
+      imagenBase64 = "";
+    });
+  </script>
+
+</body>
+</html>
